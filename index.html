@@ -33,8 +33,13 @@
 
         .hidden { display: none; }
 
+        .correct-active {
+            background-color: #dcfce7 !important; /* bg-green-100 */
+            border-color: #22c55e !important;    /* border-green-500 */
+            color: #166534 !important;          /* text-green-800 */
+        }
+
         .speaking-active {
-            border-color: #FF8B13 !important;
             box-shadow: 0 0 12px rgba(255, 139, 19, 0.4);
         }
 
@@ -75,14 +80,14 @@
         <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_c3507d7920.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- 顶部状态栏 -->
+    <!-- Header Stats -->
     <div class="w-full max-w-2xl flex justify-between items-center mb-8">
         <button id="musicToggle" class="bg-white px-5 py-2 rounded-full shadow-sm text-base font-medium text-orange-500 border border-orange-100" onclick="toggleMusic()">音乐：关</button>
         <div class="text-xl font-bold text-orange-500">🌟 科学小助手</div>
         <div id="scoreDisplay" class="bg-white px-6 py-2 rounded-full shadow-sm text-lg font-bold text-green-500 border border-green-50">积分: 0</div>
     </div>
 
-    <!-- 提示弹窗 -->
+    <!-- Modal Message Box -->
     <div id="messageBox" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 hidden">
         <div class="bg-white border-4 border-orange-400 p-8 rounded-[35px] text-center shadow-2xl min-w-[280px]">
             <div id="messageEmoji" class="text-6xl mb-4">🌟</div>
@@ -91,10 +96,9 @@
         </div>
     </div>
 
-    <!-- 游戏容器 -->
     <div id="gameContainer" class="w-full max-w-4xl">
         
-        <!-- 首页 -->
+        <!-- Home Screen -->
         <div id="startScreen" class="game-card p-10 text-center">
             <h1 class="text-3xl md:text-4xl text-orange-500 mb-8">小小科学家：探索乐园</h1>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -110,7 +114,7 @@
             <p id="loadingStatus" class="mt-8 text-gray-400 text-sm">点击单元开始，语音将自动加载</p>
         </div>
 
-        <!-- 菜单 -->
+        <!-- Unit 1 Menu -->
         <div id="unit1Menu" class="hidden space-y-4">
             <h2 class="text-2xl text-center font-bold text-blue-600 mb-6">单元一：五种感官</h2>
             <button onclick="showGame('u1g1')" class="w-full bg-blue-400 text-white p-5 rounded-2xl text-lg font-medium shadow btn-game">游戏一：我能发现什么？👃👀👂</button>
@@ -119,6 +123,7 @@
             <button onclick="backToHome()" class="w-full bg-gray-400 text-white p-3 rounded-full font-medium">⬅️ 返回首页</button>
         </div>
 
+        <!-- Unit 2 Menu -->
         <div id="unit2Menu" class="hidden space-y-4">
             <h2 class="text-2xl text-center font-bold text-green-600 mb-6">单元二：生物与非生物</h2>
             <button onclick="showGame('u2g1')" class="w-full bg-teal-400 text-white p-5 rounded-2xl text-lg font-medium shadow btn-game">游戏一：生物特征学习 🍱💧</button>
@@ -127,25 +132,28 @@
             <button onclick="backToHome()" class="w-full bg-gray-400 text-white p-3 rounded-full font-medium">⬅️ 返回首页</button>
         </div>
 
-        <!-- 游戏区域 -->
+        <!-- Game Screens -->
+        <!-- U1G1: Discovery -->
         <div id="u1g1" class="hidden game-card p-8 text-center">
             <h2 class="text-xl font-bold text-blue-500 mb-8">点击图标，看看这是哪种感官？</h2>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-                <button onclick="handleInteraction('鼻子', '👃', this)" class="bg-orange-50 p-5 rounded-2xl border-2 border-orange-100 btn-game"><div class="text-4xl mb-2">🌸</div><div class="font-medium">鼻子</div></button>
-                <button onclick="handleInteraction('眼睛', '👀', this)" class="bg-blue-50 p-5 rounded-2xl border-2 border-blue-100 btn-game"><div class="text-4xl mb-2">🌈</div><div class="font-medium">眼睛</div></button>
-                <button onclick="handleInteraction('耳朵', '👂', this)" class="bg-yellow-50 p-5 rounded-2xl border-2 border-yellow-100 btn-game"><div class="text-4xl mb-2">🔔</div><div class="font-medium">耳朵</div></button>
-                <button onclick="handleInteraction('舌头', '👅', this)" class="bg-red-50 p-5 rounded-2xl border-2 border-red-100 btn-game"><div class="text-4xl mb-2">🍦</div><div class="font-medium">舌头</div></button>
-                <button onclick="handleInteraction('手', '✋', this)" class="bg-green-50 p-5 rounded-2xl border-2 border-green-100 btn-game"><div class="text-4xl mb-2">🐈</div><div class="font-medium">手</div></button>
+                <button onclick="handleDiscovery('鼻子', '👃', this)" class="bg-orange-50 p-5 rounded-2xl border-2 border-orange-100 btn-game"><div class="text-4xl mb-2">🌸</div><div class="font-medium">鼻子</div></button>
+                <button onclick="handleDiscovery('眼睛', '👀', this)" class="bg-blue-50 p-5 rounded-2xl border-2 border-blue-100 btn-game"><div class="text-4xl mb-2">🌈</div><div class="font-medium">眼睛</div></button>
+                <button onclick="handleDiscovery('耳朵', '👂', this)" class="bg-yellow-50 p-5 rounded-2xl border-2 border-yellow-100 btn-game"><div class="text-4xl mb-2">🔔</div><div class="font-medium">耳朵</div></button>
+                <button onclick="handleDiscovery('舌头', '👅', this)" class="bg-red-50 p-5 rounded-2xl border-2 border-red-100 btn-game"><div class="text-4xl mb-2">🍦</div><div class="font-medium">舌头</div></button>
+                <button onclick="handleDiscovery('手', '✋', this)" class="bg-green-50 p-5 rounded-2xl border-2 border-green-100 btn-game"><div class="text-4xl mb-2">🐈</div><div class="font-medium">手</div></button>
                 <button onclick="showUnitMenu(1)" class="bg-gray-100 p-5 rounded-2xl font-medium text-gray-500 btn-game">返回菜单</button>
             </div>
         </div>
 
+        <!-- U1G2: Healthy Food (Multi-selection) -->
         <div id="u1g2" class="hidden game-card p-8 text-center">
             <h2 class="text-xl font-bold text-pink-500 mb-8">选出健康的食物</h2>
             <div id="u1g2Grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
             <button onclick="showUnitMenu(1)" class="mt-8 bg-gray-100 px-8 py-2 rounded-full font-medium text-gray-500">返回菜单</button>
         </div>
 
+        <!-- U1G3: Sensory Words (Sequential Quiz) -->
         <div id="u1g3" class="hidden game-card p-8 text-center">
             <h2 class="text-xl font-bold text-orange-600 mb-4">这张图片给你的感觉是？</h2>
             <div class="mb-6"><div id="u1g3Emoji" class="text-7xl floating">🍭</div></div>
@@ -153,29 +161,32 @@
             <button onclick="showUnitMenu(1)" class="mt-8 bg-gray-100 px-8 py-2 rounded-full font-medium text-gray-500">返回菜单</button>
         </div>
 
+        <!-- U2G1: Characteristics -->
         <div id="u2g1" class="hidden game-card p-8 text-center">
             <h2 class="text-xl font-bold text-teal-600 mb-8">生物有哪些特征？点击学习！</h2>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-                <button onclick="handleInteraction('食物', '🍲', this)" class="bg-teal-50 p-5 rounded-2xl border-2 border-teal-100 btn-game"><div class="text-4xl mb-2">🍲💧</div><div class="font-medium">食物</div></button>
-                <button onclick="handleInteraction('繁殖', '🐣', this)" class="bg-teal-50 p-5 rounded-2xl border-2 border-teal-100 btn-game"><div class="text-4xl mb-2">🐣</div><div class="font-medium">繁殖</div></button>
-                <button onclick="handleInteraction('呼吸', '🌬️', this)" class="bg-teal-50 p-5 rounded-2xl border-2 border-teal-100 btn-game"><div class="text-4xl mb-2">🌬️</div><div class="font-medium">呼吸</div></button>
-                <button onclick="handleInteraction('移动', '🏃', this)" class="bg-teal-50 p-5 rounded-2xl border-2 border-teal-100 btn-game"><div class="text-4xl mb-2">🏃</div><div class="font-medium">移动</div></button>
-                <button onclick="handleInteraction('休息', '😴', this)" class="bg-teal-50 p-5 rounded-2xl border-2 border-teal-100 btn-game"><div class="text-4xl mb-2">😴</div><div class="font-medium">休息</div></button>
+                <button onclick="handleDiscovery('食物', '🍲', this)" class="bg-teal-50 p-5 rounded-2xl border-2 border-teal-100 btn-game"><div class="text-4xl mb-2">🍲💧</div><div class="font-medium">食物</div></button>
+                <button onclick="handleDiscovery('繁殖', '🐣', this)" class="bg-teal-50 p-5 rounded-2xl border-2 border-teal-100 btn-game"><div class="text-4xl mb-2">🐣</div><div class="font-medium">繁殖</div></button>
+                <button onclick="handleDiscovery('呼吸', '🌬️', this)" class="bg-teal-50 p-5 rounded-2xl border-2 border-teal-100 btn-game"><div class="text-4xl mb-2">🌬️</div><div class="font-medium">呼吸</div></button>
+                <button onclick="handleDiscovery('移动', '🏃', this)" class="bg-teal-50 p-5 rounded-2xl border-2 border-teal-100 btn-game"><div class="text-4xl mb-2">🏃</div><div class="font-medium">移动</div></button>
+                <button onclick="handleDiscovery('休息', '😴', this)" class="bg-teal-50 p-5 rounded-2xl border-2 border-teal-100 btn-game"><div class="text-4xl mb-2">😴</div><div class="font-medium">休息</div></button>
                 <button onclick="showUnitMenu(2)" class="bg-gray-100 p-5 rounded-2xl font-medium text-gray-500 btn-game">返回菜单</button>
             </div>
         </div>
 
+        <!-- U2G2: Living Search (Multi-selection) -->
         <div id="u2g2" class="hidden game-card p-8 text-center">
-            <h2 class="text-xl font-bold text-lime-600 mb-8">他是生物吗？</h2>
+            <h2 class="text-xl font-bold text-lime-600 mb-8">他是生物吗？找找生物吧！</h2>
             <div id="u2g2Grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
-            <button onclick="showUnitMenu(2)" class="mt-8 bg-gray-100 px-8 py-2 rounded-full font-medium text-gray-500">返回菜单</button>
+            <button onclick="showUnitMenu(2)" class="mt-8 bg-gray-100 px-10 py-3 rounded-full font-bold text-gray-500">返回菜单</button>
         </div>
 
+        <!-- U2G3: Animal Features (Sequential Quiz) -->
         <div id="u2g3" class="hidden game-card p-8 text-center">
             <h2 class="text-xl font-bold text-purple-600 mb-4">他的特征是什么？</h2>
             <div class="mb-6"><div id="u2g3Emoji" class="text-7xl floating">🐘</div><div id="u2g3Name" class="text-lg font-medium text-gray-400 mt-2">大象</div></div>
             <div id="u2g3Options" class="grid grid-cols-2 gap-4"></div>
-            <button onclick="showUnitMenu(2)" class="mt-8 bg-gray-100 px-8 py-2 rounded-full font-medium text-gray-500">返回菜单</button>
+            <button onclick="showUnitMenu(2)" class="mt-8 bg-gray-100 px-10 py-3 rounded-full font-bold text-gray-500">返回菜单</button>
         </div>
 
     </div>
@@ -186,18 +197,19 @@
         let isMusicPlaying = false;
         const bgMusic = document.getElementById('bgMusic');
         let currentAudio = null;
+        let nextCallback = null;
         const audioCache = {};
 
-        // 扩充完整词库
+        // Comprehensive words library
         const WORDS_LIB = [
-            "鼻子", "眼睛", "耳朵", "舌头", "手", "选出健康的食物", "他是生物吗？", "他的特征是什么？", "这张图片给你的感觉是？", "生物有哪些特征？点击学习！",
+            "鼻子", "眼睛", "耳朵", "舌头", "手", "选出健康的食物", "他是生物吗？找找生物吧！", "他的特征是什么？", "这张图片给你的感觉是？", "生物有哪些特征？点击学习！",
             "苹果", "西兰花", "牛奶", "香蕉", "胡萝卜", "草莓", "糖果", "薯条", "甜甜圈", "汽水", "冰淇淋", "棒棒糖",
             "冷", "热", "辣", "甜", "酸", "苦", "硬", "软", "滑", "粗", "咸",
             "食物", "繁殖", "呼吸", "移动", "休息", "生物", "非生物", "翅膀", "毛发", "两条腿", "四条腿", "羽毛",
-            "树木", "石头", "小鸟", "汽车", "小朋友", "书本", "猫咪", "玩具", "手机", "花朵", "雨伞", "青蛙", "桌子", "太阳", "蝴蝶", "皮球", "长颈鹿", "斑马"
+            "树木", "石头", "小鸟", "汽车", "小朋友", "书本", "猫咪", "玩具", "手机", "花朵", "雨伞", "青蛙", "桌子", "太阳", "蝴蝶", "皮球", "长颈鹿", "斑马", "太棒了", "你全找对啦"
         ];
 
-        // --- 带指数退避的重试机制 ---
+        // --- TTS Retry Logic ---
         async function fetchWithRetry(word, retries = 5) {
             const delays = [1000, 2000, 4000, 8000, 16000];
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
@@ -218,15 +230,14 @@
                 } catch (e) {}
                 if (i < retries - 1) await new Promise(r => setTimeout(r, delays[i]));
             }
-            throw new Error(`TTS加载失败: ${word}`);
+            throw new Error(`TTS Loading Failed: ${word}`);
         }
 
-        // --- 优化后的预加载：控制并发并有序加载 ---
+        // --- Preload Audio ---
         async function preloadAudio(words) {
             const status = document.getElementById('loadingStatus');
             status.innerText = "正在为您加载语音...";
             
-            // 每次处理一小批，避免拥堵
             const batchSize = 3;
             for (let i = 0; i < words.length; i += batchSize) {
                 const batch = words.slice(i, i + batchSize);
@@ -241,7 +252,6 @@
                         }
                     } catch (e) { console.error(e.message); }
                 }));
-                // 给 API 喘息的时间
                 await new Promise(r => setTimeout(r, 200));
             }
             status.innerText = "语音加载完毕，准备开始！";
@@ -253,7 +263,6 @@
                 currentAudio = new Audio(audioCache[word]);
                 currentAudio.play();
             } else {
-                // 后备：如果没预加载成功，临时获取一次
                 fetchSpeechOnly(word);
             }
         }
@@ -281,11 +290,10 @@
             view.setUint32(28, rate * 2, true); view.setUint16(32, 2, true);
             view.setUint16(34, 16, true); writeString(36, 'data'); view.setUint32(40, len, true);
             for (let i = 0; i < len; i++) view.setUint8(44 + i, bytes[i]);
-            for (let i = 0; i < len; i++) view.setUint8(44 + i, bytes[i]);
             return new Blob([buffer], { type: 'audio/wav' });
         }
 
-        // --- 逻辑控制 ---
+        // --- Interaction Logic ---
         function selectUnit(u) {
             document.getElementById('startScreen').classList.add('hidden');
             document.getElementById(`unit${u}Menu`).classList.remove('hidden');
@@ -307,18 +315,22 @@
             if(id === 'u2g3') initU2G3();
         }
 
-        function handleInteraction(word, emoji, btn) {
-            if(btn) {
-                document.querySelectorAll('.btn-game').forEach(b => b.classList.remove('speaking-active'));
-                btn.classList.add('speaking-active');
-                if (currentAudio) currentAudio.onended = () => btn.classList.remove('speaking-active');
-            }
-            showMessage(word, '🌟');
+        // For Discovery/Characteristic games (G1)
+        function handleDiscovery(word, emoji, btn) {
             speak(word);
+            btn.classList.add('correct-active');
+            showMessage(word, '🌟');
+            nextCallback = () => {
+                btn.classList.remove('correct-active');
+            };
         }
 
-        // --- 游戏逻辑 ---
+        // --- Game 2 Logic: Multi-select Collection ---
+        let collectionCount = 0;
+        let collectionTarget = 0;
+
         function initU1G2() {
+            collectionCount = 0;
             const grid = document.getElementById('u1g2Grid');
             grid.innerHTML = '';
             const foodLib = [
@@ -329,7 +341,11 @@
                 { icon: '🍩', name: '甜甜圈', h: false }, { icon: '🥤', name: '汽水', h: false },
                 { icon: '🍦', name: '冰淇淋', h: false }, { icon: '🍭', name: '棒棒糖', h: false }
             ];
-            const items = foodLib.sort(() => Math.random() - 0.5).slice(0, 8);
+            const healthyOnes = foodLib.filter(f => f.h).sort(() => Math.random() - 0.5).slice(0, 4);
+            const unhealthyOnes = foodLib.filter(f => !f.h).sort(() => Math.random() - 0.5).slice(0, 4);
+            collectionTarget = healthyOnes.length;
+            const items = [...healthyOnes, ...unhealthyOnes].sort(() => Math.random() - 0.5);
+
             items.forEach(item => {
                 const b = document.createElement('button');
                 b.className = "relative bg-white border-2 border-gray-100 p-4 rounded-2xl shadow-sm btn-game overflow-hidden";
@@ -337,8 +353,16 @@
                 b.onclick = () => {
                     speak(item.name);
                     if (item.h) {
-                        showMessage(item.name, '🌟');
-                        b.style.opacity = '0.5'; b.disabled = true;
+                        if (!b.classList.contains('correct-active')) {
+                            b.classList.add('correct-active');
+                            collectionCount++;
+                            if (collectionCount === collectionTarget) {
+                                setTimeout(() => {
+                                    speak("你全找对啦");
+                                    showMessage("你全找对啦", "🌟");
+                                }, 800);
+                            }
+                        }
                     } else {
                         const x = document.createElement('div'); x.className = 'wrong-overlay'; x.innerText = '❌';
                         b.appendChild(x); setTimeout(() => b.removeChild(x), 800);
@@ -348,6 +372,46 @@
             });
         }
 
+        function initU2G2() {
+            collectionCount = 0;
+            const grid = document.getElementById('u2g2Grid');
+            grid.innerHTML = '';
+            const lib = [
+                { i: '🐈', n: '猫咪', t: '生物' }, { i: '🌲', n: '树木', t: '生物' }, { i: '🐦', n: '小鸟', t: '生物' }, { i: '👦', n: '小朋友', t: '生物' }, { i: '🐸', n: '青蛙', t: '生物' }, { i: '🦋', n: '蝴蝶', t: '生物' }, { i: '🌻', n: '花朵', t: '生物' }, { i: '🐕', n: '小狗', t: '生物' }, { i: '🦒', n: '长颈鹿', t: '生物' }, { i: '🦓', n: '斑马', t: '生物' },
+                { i: '🚗', n: '汽车', t: '非生物' }, { i: '🪨', n: '石头', t: '非生物' }, { i: '📖', n: '书本', t: '非生物' }, { i: '☂️', n: '雨伞', t: '非生物' }, { i: '⚽', n: '皮球', t: '非生物' }, { i: '📱', n: '手机', t: '非生物' }, { i: '🧸', n: '玩具', t: '非生物' }, { i: '🪑', n: '桌子', t: '非生物' }
+            ];
+            const livingOnes = lib.filter(f => f.t === '生物').sort(() => Math.random() - 0.5).slice(0, 4);
+            const nonLivingOnes = lib.filter(f => f.t === '非生物').sort(() => Math.random() - 0.5).slice(0, 4);
+            collectionTarget = livingOnes.length;
+            const items = [...livingOnes, ...nonLivingOnes].sort(() => Math.random() - 0.5);
+
+            items.forEach(item => {
+                const b = document.createElement('button');
+                b.className = "bg-white border-2 border-gray-100 p-4 rounded-2xl shadow-sm btn-game";
+                b.innerHTML = `<div class="text-4xl mb-2">${item.i}</div><div class="font-medium text-xs">${item.n}</div>`;
+                b.onclick = () => {
+                    speak(item.n);
+                    if (item.t === '生物') {
+                        if (!b.classList.contains('correct-active')) {
+                            b.classList.add('correct-active');
+                            collectionCount++;
+                            if (collectionCount === collectionTarget) {
+                                setTimeout(() => {
+                                    speak("太棒了");
+                                    showMessage("太棒了", "🌟");
+                                }, 800);
+                            }
+                        }
+                    } else {
+                        const x = document.createElement('div'); x.className = 'wrong-overlay'; x.innerText = '❌';
+                        b.appendChild(x); setTimeout(() => b.removeChild(x), 800);
+                    }
+                };
+                grid.appendChild(b);
+            });
+        }
+
+        // --- Game 3 Logic: Sequential Quiz ---
         let u1g3Idx = 0;
         function initU1G3() {
             const data = [
@@ -365,29 +429,20 @@
                 b.onclick = () => {
                     speak(o);
                     if(o === data.ans) {
-                        showMessage(o, '🌟');
-                        u1g3Idx = (u1g3Idx + 1) % 6;
-                        setTimeout(initU1G3, 1500);
+                        b.classList.add('correct-active');
+                        setTimeout(() => {
+                            showMessage(o, '🌟');
+                            nextCallback = () => {
+                                u1g3Idx = (u1g3Idx + 1) % 6;
+                                initU1G3();
+                            };
+                        }, 500);
+                    } else {
+                        const x = document.createElement('div'); x.className = 'wrong-overlay'; x.innerText = '❌';
+                        b.appendChild(x); setTimeout(() => b.removeChild(x), 800);
                     }
                 };
                 og.appendChild(b);
-            });
-        }
-
-        function initU2G2() {
-            const grid = document.getElementById('u2g2Grid');
-            grid.innerHTML = '';
-            const lib = [
-                { i: '🐈', n: '猫咪', t: '生物' }, { i: '🌲', n: '树木', t: '生物' }, { i: '🐦', n: '小鸟', t: '生物' }, { i: '👦', n: '小朋友', t: '生物' }, { i: '🐸', n: '青蛙', t: '生物' }, { i: '🦋', n: '蝴蝶', t: '生物' }, { i: '🌻', n: '花朵', t: '生物' }, { i: '🐕', n: '小狗', t: '生物' }, { i: '🦒', n: '长颈鹿', t: '生物' }, { i: '🦓', n: '斑马', t: '生物' },
-                { i: '🚗', n: '汽车', t: '非生物' }, { i: '🪨', n: '石头', t: '非生物' }, { i: '📖', n: '书本', t: '非生物' }, { i: '☂️', n: '雨伞', t: '非生物' }, { i: '⚽', n: '皮球', t: '非生物' }, { i: '📱', n: '手机', t: '非生物' }, { i: '🧸', n: '玩具', t: '非生物' }, { i: '🪑', n: '桌子', t: '非生物' }
-            ];
-            const selection = lib.sort(() => Math.random() - 0.5).slice(0, 12);
-            selection.forEach(item => {
-                const b = document.createElement('button');
-                b.className = "bg-white border-2 border-gray-100 p-4 rounded-2xl shadow-sm btn-game";
-                b.innerHTML = `<div class="text-4xl mb-2">${item.i}</div><div class="font-medium text-xs">${item.n}</div>`;
-                b.onclick = () => { speak(item.t); showMessage(item.t, '🌟'); };
-                grid.appendChild(b);
             });
         }
 
@@ -411,15 +466,24 @@
                 b.onclick = () => {
                     speak(o);
                     if(o === data.a) {
-                        showMessage(o, '🌟');
-                        u2g3Idx = (u2g3Idx + 1) % 5;
-                        setTimeout(initU2G3, 1500);
+                        b.classList.add('correct-active');
+                        setTimeout(() => {
+                            showMessage(o, '🌟');
+                            nextCallback = () => {
+                                u2g3Idx = (u2g3Idx + 1) % 5;
+                                initU2G3();
+                            };
+                        }, 500);
+                    } else {
+                        const x = document.createElement('div'); x.className = 'wrong-overlay'; x.innerText = '❌';
+                        b.appendChild(x); setTimeout(() => b.removeChild(x), 800);
                     }
                 };
                 og.appendChild(b);
             });
         }
 
+        // --- Common Helpers ---
         function toggleMusic() {
             isMusicPlaying = !isMusicPlaying;
             if (isMusicPlaying) bgMusic.play(); else bgMusic.pause();
@@ -442,6 +506,11 @@
             document.getElementById('messageBox').classList.add('hidden'); 
             score += 10; 
             document.getElementById('scoreDisplay').innerText = `积分: ${score}`; 
+            if (nextCallback) {
+                const cb = nextCallback;
+                nextCallback = null;
+                cb();
+            }
         }
     </script>
 </body>
