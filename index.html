@@ -8,9 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --header-h: 10vh;
-            --stage-h: 60vh;
-            --options-h: 30vh;
+            --header-h: 12vh;
+            --main-h: 88vh;
+            /* 游戏进行时的比例分配 */
+            --stage-h: 63vh;
+            --options-h: 25vh;
         }
 
         body {
@@ -25,7 +27,7 @@
             width: 100vw;
         }
 
-        /* 核心容器：16:9 比例，支持模拟最大化 */
+        /* 核心容器 */
         #gameViewport {
             width: 100vw;
             height: 56.25vw;
@@ -47,44 +49,128 @@
             border-radius: 0;
         }
 
-        /* 布局分层：10% / 60% / 30% */
-        header { height: var(--header-h); display: flex; align-items: center; justify-content: space-between; padding: 0 2vw; background: white; border-bottom: 2px solid #e2e8f0; z-index: 50; }
-        #stage { height: var(--stage-h); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; padding: 1vh; }
-        #options-bar { height: var(--options-h); background: #f1f5f9; border-top: 4px solid #cbd5e1; display: flex; align-items: center; justify-content: center; padding: 1vh 2vw; z-index: 40; }
+        /* 顶部导航 */
+        header { 
+            height: var(--header-h); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 2vw; 
+            background: white; 
+            border-bottom: 2px solid #e2e8f0; 
+            z-index: 50; 
+        }
 
-        /* 响应式字体 */
+        /* 主内容区 */
+        #main-area {
+            height: var(--main-h);
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 关卡选择大容器（垂直水平居中，无舞台占位） */
+        #unit-level-selector {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4vh;
+            background: radial-gradient(circle at center, #f0f9ff 0%, #f8fafc 100%);
+        }
+
+        /* 游戏运行时的舞台 */
+        #play-stage { 
+            height: var(--stage-h); 
+            position: relative; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; 
+            padding: 1vh; 
+        }
+
+        /* 游戏运行时的底部操作栏 */
+        #play-options { 
+            height: var(--options-h); 
+            background: #f1f5f9; 
+            border-top: 4px solid #cbd5e1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 1vh 2vw; 
+        }
+
+        /* 响应式文字 */
         .text-title { font-size: 3.5vh; font-weight: 700; color: #1e293b; }
-        .text-prompt { font-size: 3vh; font-weight: 700; color: #64748b; }
-        .text-option { font-size: 2.8vh; font-weight: 700; text-align: center; line-height: 1.2; }
+        .text-prompt { font-size: 2.8vh; font-weight: 700; color: #64748b; margin-bottom: 1vh; }
+        .text-option { font-size: 2.5vh; font-weight: 700; text-align: center; line-height: 1.1; }
 
         .btn-game { transition: transform 0.1s; }
         .btn-game:active { transform: scale(0.95); }
         .hidden { display: none !important; }
 
+        /* 选项卡片样式 */
         .option-card {
             background: white;
             border: 3px solid #e2e8f0;
-            border-radius: 1.5vh;
-            height: 85%;
+            border-radius: 2vh;
+            height: 90%;
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 0 #cbd5e1;
+            box-shadow: 0 5px 0 #cbd5e1;
             padding: 1vh;
         }
-        .option-card.correct { background: #dcfce7; border-color: #22c55e; box-shadow: 0 4px 0 #16a34a; pointer-events: none; }
-        .option-card.wrong { background: #fee2e2; border-color: #ef4444; box-shadow: 0 4px 0 #dc2626; }
+        .option-card.correct { background: #dcfce7; border-color: #22c55e; box-shadow: 0 5px 0 #16a34a; pointer-events: none; }
+        .option-card.wrong { background: #fee2e2; border-color: #ef4444; box-shadow: 0 5px 0 #dc2626; }
 
         .heart { font-size: 4vh; transition: all 0.3s ease; }
         .heart-empty { filter: grayscale(1); opacity: 0.3; }
 
-        #matching-container { display: grid; grid-template-columns: 1fr 1fr; gap: 4vw; width: 85%; height: 90%; }
-        .match-item { background: white; border: 3px solid #e2e8f0; padding: 1vh; border-radius: 1.5vh; text-align: center; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 2.4vh; font-weight: bold; height: 100%; }
+        /* 连线匹配样式 - 修复 image_4dff96 的显示不全 */
+        #matching-container { display: grid; grid-template-cols: 1fr 1fr; gap: 3vw; width: 90%; height: 95%; max-height: 55vh; }
+        .match-item { 
+            background: white; 
+            border: 3px solid #e2e8f0; 
+            padding: 0.5vh 2vw; 
+            border-radius: 1.5vh; 
+            text-align: center; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 2.2vh; 
+            font-weight: bold; 
+            height: 100%; 
+            min-height: 8vh;
+        }
         .match-item.selected { border-color: #f59e0b; background: #fffbeb; box-shadow: 0 0 10px #fde68a; }
-        .match-item.done { background: #f1f5f9; color: #cbd5e1; pointer-events: none; border-style: dashed; }
+        .match-item.done { background: #f1f5f9; color: #cbd5e1; pointer-events: none; border-style: dashed; opacity: 0.5; }
+
+        /* 关卡选择按钮 - 居中且美观 */
+        .level-btn {
+            background: white;
+            border: 4px solid #e2e8f0;
+            padding: 4vh 6vw;
+            border-radius: 3vh;
+            font-size: 3.2vh;
+            font-weight: 700;
+            color: #475569;
+            box-shadow: 0 8px 0 #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 25vw;
+            margin: 1vh;
+        }
 
         .wrong-shake { animation: shake 0.4s ease-in-out; }
         @keyframes shake {
@@ -101,11 +187,13 @@
     </audio>
 
     <div id="gameViewport">
-        <!-- 头部导航与生命值 -->
+        <!-- 头部导航 -->
         <header>
-            <div class="flex gap-2">
-                <button onclick="toggleMaximize()" class="bg-blue-500 text-white px-4 py-1 rounded-xl text-sm font-bold btn-game">最大化</button>
-                <button id="musicToggle" onclick="toggleMusic()" class="bg-gray-100 p-2 rounded-full text-xl btn-game">🔇</button>
+            <div class="flex items-center gap-3">
+                <!-- 🏠 按钮固定在左上方 -->
+                <button id="home-btn" onclick="goHome()" class="hidden bg-white p-2 rounded-full text-2xl btn-game border-2 border-gray-200 shadow-sm leading-none flex items-center justify-center">🏠</button>
+                <button onclick="toggleMaximize()" class="bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-bold btn-game">最大化</button>
+                <button id="musicToggle" onclick="toggleMusic()" class="bg-gray-100 p-2 rounded-full text-xl btn-game border border-gray-200">🔇</button>
             </div>
             <div id="lives-display" class="flex gap-1">
                 <span id="h1" class="heart">❤️</span>
@@ -114,58 +202,63 @@
             </div>
         </header>
 
-        <!-- 游戏舞台 -->
-        <main id="stage">
-            <div id="startScreen" class="text-center">
-                <h1 class="text-6xl font-bold text-orange-500 mb-10">小小科学家</h1>
-                <div class="grid grid-cols-2 gap-6 max-w-2xl mx-auto px-4">
-                    <button onclick="selectUnit(1)" class="bg-yellow-400 p-6 rounded-3xl text-2xl font-bold text-white shadow-xl btn-game">单元一：感官</button>
-                    <button onclick="selectUnit(2)" class="bg-green-500 p-6 rounded-3xl text-2xl font-bold text-white shadow-xl btn-game">单元二：生物</button>
-                    <button onclick="selectUnit(3)" class="bg-blue-500 p-6 rounded-3xl text-2xl font-bold text-white shadow-xl btn-game">单元三：人类</button>
-                    <button onclick="selectUnit(4)" class="bg-purple-500 p-6 rounded-3xl text-2xl font-bold text-white shadow-xl btn-game">单元四：动物</button>
+        <!-- 主内容区 -->
+        <div id="main-area">
+            
+            <!-- 首页：单元选择 -->
+            <div id="startScreen" class="w-full h-full flex flex-col items-center justify-center">
+                <h1 class="text-[7vh] font-bold text-orange-500 mb-10">小小科学家</h1>
+                <div class="grid grid-cols-2 gap-8 w-full max-w-3xl px-6">
+                    <button onclick="selectUnit(1)" class="bg-white border-4 border-yellow-400 text-yellow-600 py-8 rounded-[4vh] text-[3.5vh] font-bold shadow-[0_10px_0_#fbbf24] btn-game">单元一：感官</button>
+                    <button onclick="selectUnit(2)" class="bg-white border-4 border-green-500 text-green-600 py-8 rounded-[4vh] text-[3.5vh] font-bold shadow-[0_10px_0_#22c55e] btn-game">单元二：生物</button>
+                    <button onclick="selectUnit(3)" class="bg-white border-4 border-blue-500 text-blue-600 py-8 rounded-[4vh] text-[3.5vh] font-bold shadow-[0_10px_0_#3b82f6] btn-game">单元三：人类</button>
+                    <button onclick="selectUnit(4)" class="bg-white border-4 border-purple-500 text-purple-600 py-8 rounded-[4vh] text-[3.5vh] font-bold shadow-[0_10px_0_#a855f7] btn-game">单元四：动物</button>
                 </div>
             </div>
 
-            <!-- 动态内容容器 -->
-            <div id="stage-content" class="hidden flex flex-col items-center justify-center w-full h-full">
-                <div id="prompt-text" class="text-prompt mb-2">请选择：</div>
-                <div id="main-stimulus" class="text-[12vh] bg-white p-6 rounded-full shadow-lg border-4 border-gray-100 leading-none"></div>
-                <div id="main-label" class="text-title mt-4"></div>
-                <div id="matching-box" class="hidden w-full h-full flex items-center justify-center"></div>
+            <!-- 关卡选择阶段（完全居中，无背景Stage干扰） -->
+            <div id="unit-level-selector" class="hidden">
+                <div id="level-buttons-container" class="flex flex-wrap gap-8 justify-center items-center">
+                    <!-- 动态生成关卡按钮，在这里居中显示 -->
+                </div>
             </div>
-        </main>
 
-        <!-- 底部操作栏 -->
-        <footer id="options-bar">
-            <div id="options-grid" class="grid w-full h-full gap-4 items-center">
-                <!-- 动态生成选项按钮 -->
+            <!-- 游戏进行阶段 -->
+            <div id="gamePlayArea" class="hidden flex flex-col w-full h-full">
+                <!-- 舞台区 -->
+                <div id="play-stage">
+                    <div id="prompt-text" class="text-prompt">请选择：</div>
+                    <div id="main-stimulus" class="text-[14vh] bg-white p-8 rounded-full shadow-lg border-4 border-gray-100 leading-none"></div>
+                    <div id="main-label" class="text-title mt-2"></div>
+                    <div id="matching-box" class="hidden w-full h-full flex items-center justify-center"></div>
+                </div>
+                <!-- 操作区 -->
+                <div id="play-options">
+                    <div id="options-grid" class="grid w-full h-full gap-6 items-center px-12">
+                        <!-- 动态生成选项按钮 -->
+                    </div>
+                </div>
             </div>
-            <div id="unit-menu" class="hidden flex gap-3 w-full justify-center flex-wrap px-4">
-                <!-- 单元内游戏按钮 -->
-            </div>
-            <!-- 返回主页图标 -->
-            <button id="home-btn" onclick="goHome()" class="hidden absolute bottom-4 right-4 bg-white/80 p-3 rounded-full text-2xl btn-game shadow-md border border-gray-200">🏠</button>
-        </footer>
 
-        <!-- 成功/反馈弹窗 -->
+        </div>
+
+        <!-- 反馈弹窗 -->
         <div id="msgBox" class="fixed inset-0 z-[100] flex items-center justify-center hidden bg-black/40">
-            <div class="bg-white p-8 rounded-[40px] text-center shadow-2xl border-8 border-orange-400 scale-110">
-                <div class="text-7xl mb-2">🌟</div>
-                <div id="msgText" class="text-3xl font-bold mb-6">太棒了!</div>
-                <button onclick="closeMsg()" class="bg-orange-500 text-white px-12 py-3 rounded-full text-2xl font-bold btn-game shadow-lg">确定</button>
+            <div class="bg-white p-10 rounded-[50px] text-center shadow-2xl border-8 border-orange-400 scale-110">
+                <div class="text-7xl mb-4">🌟</div>
+                <div id="msgText" class="text-3xl font-bold mb-8 text-gray-700">太棒了!</div>
+                <button onclick="closeMsg()" class="bg-orange-500 text-white px-16 py-4 rounded-full text-2xl font-bold btn-game shadow-lg">确定</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 核心游戏逻辑 ---
         let lives = 3;
         let isMusicPlaying = false;
         const bgMusic = document.getElementById('bgMusic');
         let currentUnit = 0;
         let nextLevelCallback = null;
 
-        // 音效系统 (Web Audio)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSfx(freq, type, dur) {
             const osc = audioCtx.createOscillator();
@@ -188,7 +281,7 @@
             document.getElementById('gameViewport').classList.add('wrong-shake');
             setTimeout(() => document.getElementById('gameViewport').classList.remove('wrong-shake'), 400);
             if(lives <= 0) {
-                setTimeout(() => { alert("生命用完啦，要多练习哦！"); goHome(); }, 500);
+                setTimeout(() => { alert("再练习一下吧！重新开始。"); goHome(); }, 500);
             }
         }
 
@@ -200,50 +293,47 @@
             }
         }
 
-        // --- 应用最大化 (Simulated Fullscreen) ---
         function toggleMaximize() {
             document.getElementById('gameViewport').classList.toggle('maximized');
         }
 
-        // --- 修复音乐播放 AbortError ---
         async function toggleMusic() {
             if (!isMusicPlaying) {
                 try {
                     await bgMusic.play();
                     isMusicPlaying = true;
-                    document.getElementById('musicToggle').innerText = '🔊';
-                } catch (err) {
-                    console.log("播放被中断或未获得用户交互权限");
-                }
+                    document.getElementById('musicToggle').innerHTML = '🔊';
+                } catch (err) {}
             } else {
                 bgMusic.pause();
                 isMusicPlaying = false;
-                document.getElementById('musicToggle').innerText = '🔇';
+                document.getElementById('musicToggle').innerHTML = '🔇';
             }
         }
 
-        // --- 导航与流程 ---
+        // --- 核心导航功能 ---
         function goHome() {
-            lives = 3; updateLivesUI();
+            lives = 3; 
+            updateLivesUI();
             document.getElementById('startScreen').classList.remove('hidden');
-            document.getElementById('stage-content').classList.add('hidden');
-            document.getElementById('options-grid').innerHTML = '';
-            document.getElementById('unit-menu').classList.add('hidden');
+            document.getElementById('unit-level-selector').classList.add('hidden');
+            document.getElementById('gamePlayArea').classList.add('hidden');
             document.getElementById('home-btn').classList.add('hidden');
         }
 
         function selectUnit(u) {
             currentUnit = u;
             document.getElementById('startScreen').classList.add('hidden');
-            document.getElementById('unit-menu').classList.remove('hidden');
+            document.getElementById('unit-level-selector').classList.remove('hidden');
+            document.getElementById('gamePlayArea').classList.add('hidden');
             document.getElementById('home-btn').classList.remove('hidden');
-            renderUnitMenu(u);
+            renderLevelButtons(u);
             if(!isMusicPlaying) toggleMusic();
         }
 
-        function renderUnitMenu(u) {
-            const menu = document.getElementById('unit-menu');
-            menu.innerHTML = '';
+        function renderLevelButtons(u) {
+            const container = document.getElementById('level-buttons-container');
+            container.innerHTML = '';
             const games = {
                 1: [['配配乐', 'u1g1'], ['食物分类', 'u1g2'], ['神奇感觉', 'u1g3']],
                 2: [['生物需求', 'u2g1'], ['找出生物', 'u2g2'], ['特征配对', 'u2g3'], ['植物部位', 'u2g4'], ['交通工具', 'u2g5']],
@@ -252,18 +342,20 @@
             };
             games[u].forEach(g => {
                 const b = document.createElement('button');
-                b.className = "bg-white border-2 border-gray-300 px-5 py-2 rounded-2xl font-bold text-lg btn-game shadow-sm";
+                b.className = "level-btn btn-game";
                 b.innerText = g[0];
                 b.onclick = () => startLevel(g[1]);
-                menu.appendChild(b);
+                container.appendChild(b);
             });
         }
 
         function startLevel(id) {
-            document.getElementById('unit-menu').classList.add('hidden');
-            document.getElementById('stage-content').classList.remove('hidden');
+            document.getElementById('unit-level-selector').classList.add('hidden');
+            document.getElementById('gamePlayArea').classList.remove('hidden');
             document.getElementById('options-grid').innerHTML = '';
             document.getElementById('main-label').innerText = '';
+            document.getElementById('main-stimulus').classList.remove('hidden');
+            document.getElementById('matching-box').classList.add('hidden');
             
             if(id === 'u1g1') initU1G1();
             else if(id === 'u1g2') initU1G2(1);
@@ -280,13 +372,13 @@
 
         function renderOptions(items, cols = 4) {
             const grid = document.getElementById('options-grid');
-            grid.className = `grid grid-cols-${cols} gap-4 w-full h-full px-10`;
+            grid.className = `grid grid-cols-${cols} gap-6 w-full h-full px-12`;
             grid.innerHTML = '';
             items.forEach(item => {
                 const card = document.createElement('div');
                 card.className = "option-card btn-game";
                 card.innerHTML = `
-                    ${item.i ? `<div class="text-[5.5vh] mb-1">${item.i}</div>` : ''}
+                    ${item.i ? `<div class="text-[7vh] mb-1">${item.i}</div>` : ''}
                     <div class="text-option">${item.n}</div>
                 `;
                 card.onclick = () => item.action(card);
@@ -294,18 +386,15 @@
             });
         }
 
-        // --- 单元一：感官游戏 ---
+        // --- 游戏关卡实现 ---
         function initU1G1() {
             document.getElementById('prompt-text').innerText = "连一连器官和它的功能：";
             document.getElementById('main-stimulus').classList.add('hidden');
-            const box = document.getElementById('matching-box');
-            box.classList.remove('hidden');
-            box.innerHTML = `<div id="matching-container"><div id="m-left" class="flex flex-col gap-3"></div><div id="m-right" class="flex flex-col gap-3"></div></div>`;
-            
+            const box = document.getElementById('matching-box'); box.classList.remove('hidden');
+            box.innerHTML = `<div id="matching-container"><div id="m-left" class="flex flex-col gap-2"></div><div id="m-right" class="flex flex-col gap-2"></div></div>`;
             const data = [{o:'鼻子',s:'👃',a:'闻'},{o:'眼睛',s:'👀',a:'看'},{o:'耳朵',s:'👂',a:'听'},{o:'舌头',s:'👅',a:'尝'},{o:'手',s:'✋',a:'感觉'}];
             let sel = null; let count = 0;
             const left = document.getElementById('m-left'); const right = document.getElementById('m-right');
-            
             [...data].sort(()=>Math.random()-0.5).forEach(d => {
                 const el = document.createElement('div'); el.className="match-item"; el.innerText = d.s + " " + d.o;
                 el.onclick = () => { document.querySelectorAll('#m-left .match-item').forEach(x=>x.classList.remove('selected')); el.classList.add('selected'); sel = d; };
@@ -313,13 +402,7 @@
             });
             [...data].sort(()=>Math.random()-0.5).forEach(d => {
                 const el = document.createElement('div'); el.className="match-item"; el.innerText = d.a;
-                el.onclick = () => {
-                    if(!sel) return;
-                    if(sel.a === d.a) {
-                        triggerCorrect(); el.classList.add('done'); document.querySelector('#m-left .selected').classList.add('done');
-                        count++; if(count===5) setTimeout(()=>showMessage("配对完全正确！"),300); sel = null;
-                    } else triggerWrong();
-                };
+                el.onclick = () => { if(!sel) return; if(sel.a === d.a) { triggerCorrect(); el.classList.add('done'); document.querySelector('#m-left .selected').classList.add('done'); count++; if(count===5) setTimeout(()=>showMessage("配对全对！"),300); sel = null; } else triggerWrong(); };
                 right.appendChild(el);
             });
         }
@@ -328,202 +411,73 @@
             const isH = page === 1;
             document.getElementById('prompt-text').innerText = isH ? "选出健康的食物：" : "选出不健康的食物：";
             document.getElementById('main-stimulus').innerText = isH ? "🍎" : "🍬";
-            document.getElementById('main-stimulus').classList.remove('hidden');
-            document.getElementById('matching-box').classList.add('hidden');
-
             const h = [{n:'苹果',i:'🍎'},{n:'西兰花',i:'🥦'},{n:'牛奶',i:'🥛'},{n:'香蕉',i:'🍌'}];
             const u = [{n:'糖果',i:'🍬'},{n:'薯条',i:'🍟'},{n:'甜甜圈',i:'🍩'},{n:'汽水',i:'🥤'}];
             const targets = isH ? h : u; const noise = isH ? u : [{n:'鱼肉',i:'🐟'},{n:'水',i:'💧'},{n:'鸡蛋',i:'🥚'},{n:'橙子',i:'🍊'}];
             const items = [...targets.map(x=>({...x,c:1})), ...noise.map(x=>({...x,c:0}))].sort(()=>Math.random()-0.5);
-            
             let count = 0;
-            renderOptions(items.map(it => ({
-                n: it.n, i: it.i, action: (el) => {
-                    if(it.c) {
-                        if(!el.classList.contains('correct')) {
-                            triggerCorrect(); el.classList.add('correct'); count++;
-                            if(count === 4) {
-                                if(isH) { showMessage("太棒了！接下来分一分不健康的。"); nextLevelCallback = () => initU1G2(2); }
-                                else showMessage("食物分类全对！");
-                            }
-                        }
-                    } else triggerWrong();
-                }
-            })), 4);
+            renderOptions(items.map(it => ({ n: it.n, i: it.i, action: (el) => { if(it.c) { if(!el.classList.contains('correct')) { triggerCorrect(); el.classList.add('correct'); count++; if(count === 4) { if(isH) { showMessage("太棒了！接下来找不健康的。"); nextLevelCallback = () => initU1G2(2); } else showMessage("完成！"); } } } else triggerWrong(); } })), 4);
         }
 
         function initU1G3(idx) {
-            const sData = [
-                {n:'石头',i:'🪨',a:'粗',o:['粗','滑','软']},
-                {n:'镜子',i:'🪞',a:'滑',o:['滑','硬','冷']},
-                {n:'砖块',i:'🧱',a:'硬',o:['硬','软','酸']},
-                {n:'枕头',i:'☁️',a:'软',o:['软','硬','热']},
-                {n:'冰块',i:'🧊',a:'冷',o:['冷','热','咸']},
-                {n:'火焰',i:'🔥',a:'热',o:['热','冷','辣']},
-                {n:'柠檬',i:'🍋',a:'酸',o:['酸','甜','苦']},
-                {n:'糖果',i:'🍭',a:'甜',o:['甜','酸','咸']},
-                {n:'药',i:'💊',a:'苦',o:['苦','辣','甜']},
-                {n:'辣椒',i:'🌶️',a:'辣',o:['辣','酸','甜']},
-                {n:'盐',i:'🧂',a:'咸',o:['咸','酸','甜']}
-            ];
-            const d = sData[idx];
-            document.getElementById('prompt-text').innerText = "这是什么感觉？";
-            document.getElementById('main-stimulus').innerText = d.i;
-            document.getElementById('main-label').innerText = d.n;
-            document.getElementById('main-stimulus').classList.remove('hidden');
-            document.getElementById('matching-box').classList.add('hidden');
-
-            renderOptions(d.o.map(o => ({
-                n: o, action: () => {
-                    if(o === d.a) {
-                        triggerCorrect();
-                        if(idx + 1 < sData.length) initU1G3(idx + 1);
-                        else showMessage("所有感觉你都掌握了！");
-                    } else triggerWrong();
-                }
-            })), 3);
+            const sData = [{n:'石头',i:'🪨',a:'粗',o:['粗','滑','软']},{n:'镜子',i:'🪞',a:'滑',o:['滑','硬','冷']},{n:'砖块',i:'🧱',a:'硬',o:['硬','软','酸']},{n:'枕头',i:'☁️',a:'软',o:['软','硬','热']},{n:'冰块',i:'🧊',a:'冷',o:['冷','热','咸']},{n:'火焰',i:'🔥',a:'热',o:['热','冷','辣']},{n:'柠檬',i:'🍋',a:'酸',o:['酸','甜','苦']},{n:'糖果',i:'🍭',a:'甜',o:['甜','酸','咸']},{n:'药',i:'💊',a:'苦',o:['苦','辣','甜']},{n:'辣椒',i:'🌶️',a:'辣',o:['辣','酸','甜']},{n:'盐',i:'🧂',a:'咸',o:['咸','酸','甜']}];
+            const d = sData[idx]; document.getElementById('prompt-text').innerText = "这是什么感觉？"; document.getElementById('main-stimulus').innerText = d.i; document.getElementById('main-label').innerText = d.n;
+            renderOptions(d.o.map(o => ({ n: o, action: () => { if(o === d.a) { triggerCorrect(); if(idx + 1 < sData.length) initU1G3(idx + 1); else showMessage("所有感觉都找对啦！"); } else triggerWrong(); } })), 3);
         }
 
-        // --- 单元三：人类（身体部位大图+二选一） ---
-        const bodyParts = [
-            {n:'眉毛',i:'🤨'},{n:'眼睛',i:'👀'},{n:'嘴巴',i:'👄'},{n:'下巴',i:'🧔'},{n:'手臂',i:'💪'},
-            {n:'手',i:'✋'},{n:'耳朵',i:'👂'},{n:'鼻子',i:'👃'},{n:'牙齿',i:'🦷'},{n:'胸部',i:'👕'},
-            {n:'肚子',i:'🤰'},{n:'腿',i:'🦵'},{n:'脚趾',i:'🦶'},{n:'膝盖',i:'🦵'},{n:'脚',i:'👣'}
-        ];
+        const bodyParts = [{n:'眉毛',i:'🤨'},{n:'眼睛',i:'👀'},{n:'嘴巴',i:'👄'},{n:'下巴',i:'🧔'},{n:'手臂',i:'💪'},{n:'手',i:'✋'},{n:'耳朵',i:'👂'},{n:'鼻子',i:'👃'},{n:'牙齿',i:'🦷'},{n:'胸部',i:'👕'},{n:'肚子',i:'🤰'},{n:'腿',i:'🦵'},{n:'脚趾',i:'🦶'},{n:'膝盖',i:'🦵'},{n:'脚',i:'👣'}];
         function initU3G1(idx) {
-            const data = bodyParts[idx];
-            document.getElementById('prompt-text').innerText = "这是身体的哪个部位？";
-            document.getElementById('main-stimulus').innerText = data.i;
-            document.getElementById('main-stimulus').classList.remove('hidden');
-            document.getElementById('matching-box').classList.add('hidden');
-
+            const data = bodyParts[idx]; document.getElementById('prompt-text').innerText = "这是哪个部位？"; document.getElementById('main-stimulus').innerText = data.i;
             let decoy = bodyParts.filter(x=>x.n !== data.n).sort(()=>Math.random()-0.5)[0];
-            const items = [data, decoy].sort(()=>Math.random()-0.5);
-
-            renderOptions(items.map(it => ({
-                n: it.n, action: () => {
-                    if(it.n === data.n) {
-                        triggerCorrect();
-                        if(idx + 1 < bodyParts.length) initU3G1(idx + 1);
-                        else showMessage("身体部位挑战成功！");
-                    } else triggerWrong();
-                }
-            })), 2);
+            renderOptions([data, decoy].sort(()=>Math.random()-0.5).map(it => ({ n: it.n, action: () => { if(it.n === data.n) { triggerCorrect(); if(idx + 1 < bodyParts.length) initU3G1(idx + 1); else showMessage("挑战成功！"); } else triggerWrong(); } })), 2);
         }
 
-        // --- 单元二：生物游戏 ---
         function initU2G1() {
-            document.getElementById('prompt-text').innerText = "生物需要什么才能生存？";
-            document.getElementById('main-stimulus').innerText = "🌱";
+            document.getElementById('prompt-text').innerText = "生物需要什么生存？"; document.getElementById('main-stimulus').innerText = "🌱";
             const needs = [{n:'空气',i:'🌬️',c:1},{n:'阳光',i:'☀️',c:1},{n:'食物',i:'🍲',c:1},{n:'水',i:'💧',c:1},{n:'手机',i:'📱',c:0},{n:'电视',i:'📺',c:0},{n:'钱',i:'💰',c:0},{n:'玩具',i:'🧸',c:0}];
-            let count = 0;
-            renderOptions(needs.sort(()=>Math.random()-0.5).map(it => ({
-                n: it.n, i: it.i, action: (el) => {
-                    if(it.c) {
-                        if(!el.classList.contains('correct')) { triggerCorrect(); el.classList.add('correct'); count++; if(count===4) showMessage("找齐啦！生物需要空气、阳光、食物和水。"); }
-                    } else triggerWrong();
-                }
-            })), 4);
+            let count = 0; renderOptions(needs.sort(()=>Math.random()-0.5).map(it => ({ n: it.n, i: it.i, action: (el) => { if(it.c) { if(!el.classList.contains('correct')){ triggerCorrect(); el.classList.add('correct'); count++; if(count===4) showMessage("全对！空气、阳光、食物和水。"); } } else triggerWrong(); } })), 4);
         }
 
         function initU2G2() {
-            document.getElementById('prompt-text').innerText = "找一找，哪些是生物？";
-            document.getElementById('main-stimulus').innerText = "🦁";
+            document.getElementById('prompt-text').innerText = "哪些是生物？"; document.getElementById('main-stimulus').innerText = "🦁";
             const lib = [{i:'🐈',n:'猫咪',t:1},{i:'🌲',n:'树木',t:1},{i:'🐦',n:'小鸟',t:1},{i:'👦',n:'小朋友',t:1},{i:'🚗',n:'汽车',t:0},{i:'🪨',n:'石头',t:0},{i:'📖',n:'书本',t:0},{i:'☂️',n:'雨伞',t:0}];
-            let count = 0;
-            renderOptions([...lib].sort(()=>Math.random()-0.5).map(it => ({
-                n: it.n, i: it.i, action: (el) => {
-                    if(it.t) {
-                        if(!el.classList.contains('correct')) { triggerCorrect(); el.classList.add('correct'); count++; if(count===4) showMessage("你真棒！生物都被找出来了。"); }
-                    } else triggerWrong();
-                }
-            })), 4);
+            let count = 0; renderOptions([...lib].sort(()=>Math.random()-0.5).map(it => ({ n: it.n, i: it.i, action: (el) => { if(it.t) { if(!el.classList.contains('correct')){ triggerCorrect(); el.classList.add('correct'); count++; if(count===4) showMessage("太棒了！"); } } else triggerWrong(); } })), 4);
         }
 
         function initU2G3(idx) {
-            const p = [{i:'🦅',n:'老鹰',a:'翅膀',o:['翅膀','毛发','四条腿']},{i:'🦁',n:'狮子',a:'毛发',o:['毛发','羽毛','两条腿']},{i:'🦢',n:'天鹅',a:'羽毛',o:['羽毛','毛发','硬壳']},{i:'🐘',n:'大象',a:'四条腿',o:['四条腿','两条腿','翅膀']},{i:'🦆',n:'鸭子',a:'两条腿',o:['两条腿','四条腿','硬壳']}];
-            const d = p[idx]; document.getElementById('prompt-text').innerText = "选出它最明显的特征：";
-            document.getElementById('main-stimulus').innerText=d.i; document.getElementById('main-label').innerText=d.n;
-            renderOptions(d.o.sort(()=>Math.random()-0.5).map(o => ({
-                n: o, action: () => {
-                    if(o === d.a) { triggerCorrect(); if(idx+1 < p.length) initU2G3(idx+1); else showMessage("特征配对完成！"); }
-                    else triggerWrong();
-                }
-            })), 3);
+            const p = [{i:'🦅',n:'老鹰',a:'翅膀',o:['翅膀','毛发','四条腿']},{i:'🦁',n:'狮子',a:'毛发',o:['毛发','羽毛','两条腿']},{i:'🐘',n:'大象',a:'四条腿',o:['四条腿','两条腿','翅膀']},{i:'🦆',n:'鸭子',a:'两条腿',o:['两条腿','四条腿','硬壳']}];
+            const d = p[idx]; document.getElementById('prompt-text').innerText = "选特征："; document.getElementById('main-stimulus').innerText=d.i; document.getElementById('main-label').innerText=d.n;
+            renderOptions(d.o.sort(()=>Math.random()-0.5).map(o => ({ n: o, action: () => { if(o === d.a) { triggerCorrect(); if(idx+1 < p.length) initU2G3(idx+1); else showMessage("对啦！"); } else triggerWrong(); } })), 3);
         }
 
         function initU2G4(idx) {
             const p = [{i:'🍃',n:'叶子',a:'叶子'},{i:'🎋',n:'茎',a:'茎'},{i:'🌸',n:'花',a:'花'},{i:'🪴',n:'根',a:'根'}];
-            const d = p[idx]; document.getElementById('prompt-text').innerText = "这是植物的哪个部位？";
-            document.getElementById('main-stimulus').innerText = d.i; document.getElementById('main-label').innerText = "";
-            renderOptions(['叶子', '茎', '花', '根'].map(o => ({
-                n: o, action: () => {
-                    if(o === d.a) { triggerCorrect(); if(idx+1 < p.length) initU2G4(idx+1); else showMessage("你对植物很了解！"); }
-                    else triggerWrong();
-                }
-            })), 4);
+            const d = p[idx]; document.getElementById('prompt-text').innerText = "这是植物的哪个部位？"; document.getElementById('main-stimulus').innerText = d.i;
+            renderOptions(['叶子', '茎', '花', '根'].map(o => ({ n: o, action: () => { if(o === d.a) { triggerCorrect(); if(idx+1 < p.length) initU2G4(idx+1); else showMessage("植物部位全对！"); } else triggerWrong(); } })), 4);
         }
 
         function initU2G5(idx) {
-            const p = [{i:'✈️',n:'直升机',a:'空中'},{i:'🚢',n:'轮船',a:'水上'},{i:'🚲',n:'自行车',a:'陆地'},{i:'🚀',n:'火箭',a:'空中'},{i:'🛳️',n:'帆船',a:'水上'}];
-            const d = p[idx]; document.getElementById('prompt-text').innerText = "它在哪里航行？";
-            document.getElementById('main-stimulus').innerText = d.i; document.getElementById('main-label').innerText = d.n;
-            renderOptions(['空中', '陆地', '水上'].map(o => ({
-                n: o, action: () => {
-                    if(o === d.a) { triggerCorrect(); if(idx+1 < p.length) initU2G5(idx+1); else showMessage("交通工具分类全对！"); }
-                    else triggerWrong();
-                }
-            })), 3);
+            const p = [{i:'✈️',n:'直升机',a:'空中'},{i:'🚢',n:'轮船',a:'水上'},{i:'🚀',n:'火箭',a:'空中'}];
+            const d = p[idx]; document.getElementById('prompt-text').innerText = "它在哪里航行？"; document.getElementById('main-stimulus').innerText = d.i; document.getElementById('main-label').innerText = d.n;
+            renderOptions(['空中', '陆地', '水上'].map(o => ({ n: o, action: () => { if(o === d.a) { triggerCorrect(); if(idx+1 < p.length) initU2G5(idx+1); else showMessage("分得很清楚！"); } else triggerWrong(); } })), 3);
         }
 
-        // --- 单元四：动物 ---
         function initU4G1(idx) {
-            const p = [
-                {i:'🐶',n:'狗',a:'哺乳动物'},{i:'🐬',n:'海豚',a:'哺乳动物'},{i:'🐠',n:'金鱼',a:'鱼'},
-                {i:'🦅',n:'老鹰',a:'鸟'},{i:'🦎',n:'蜥蜴',a:'爬行类'},{i:'🐊',n:'鳄鱼',a:'爬行类'}
-            ];
-            const d = p[idx]; document.getElementById('prompt-text').innerText = "它是哪一类动物？";
-            document.getElementById('main-stimulus').innerText = d.i; document.getElementById('main-label').innerText = d.n;
-            renderOptions(['哺乳动物', '鱼', '鸟', '爬行类'].map(o => ({
-                n: o, action: () => {
-                    if(o === d.a) { triggerCorrect(); if(idx+1 < p.length) initU4G1(idx+1); else showMessage("分类非常准确！"); }
-                    else triggerWrong();
-                }
-            })), 2);
+            const p = [{i:'🐶',n:'狗',a:'哺乳动物'},{i:'🐠',n:'金鱼',a:'鱼'},{i:'🦅',n:'老鹰',a:'鸟'},{i:'🐊',n:'鳄鱼',a:'爬行类'}];
+            const d = p[idx]; document.getElementById('prompt-text').innerText = "它是哪一类动物？"; document.getElementById('main-stimulus').innerText = d.i; document.getElementById('main-label').innerText = d.n;
+            renderOptions(['哺乳动物', '鱼', '鸟', '爬行类'].map(o => ({ n: o, action: () => { if(o === d.a) { triggerCorrect(); if(idx+1 < p.length) initU4G1(idx+1); else showMessage("分类全对！"); } else triggerWrong(); } })), 2);
         }
 
         function initU4G2(idx) {
-            const tData = [
-                {t:'哺乳动物', trait:'有毛发或皮毛', n:['有羽毛','有鳞片']},
-                {t:'哺乳动物', trait:'耳朵突出来', n:['没有外耳','长着鳍']},
-                {t:'鱼', trait:'用鳃呼吸', n:['用肺呼吸','用气囊呼吸']},
-                {t:'鱼', trait:'鳍用来游泳', n:['翅膀用来飞行','手用来抓握']},
-                {t:'鸟', trait:'羽毛', n:['干燥的鳞片','粘湿的皮肤']},
-                {t:'鸟', trait:'气囊用来辅助呼吸', n:['鳃用来呼吸','用肺直接呼吸']},
-                {t:'爬行类', trait:'干燥的鳞片皮肤', n:['滑滑的鳞片','湿润的皮肤']},
-                {t:'爬行类', trait:'用肺呼吸', n:['用鳃呼吸','用气囊呼吸']}
-            ];
-            const d = tData[idx]; document.getElementById('prompt-text').innerText = `属于 ${d.t} 的特征是：`;
-            document.getElementById('main-stimulus').innerText = "🐾"; document.getElementById('main-label').innerText = "";
+            const tData = [{t:'哺乳动物', trait:'有毛发或皮毛', n:['有羽毛','有鳞片']},{t:'鱼', trait:'用鳃呼吸', n:['用肺呼吸','用气囊呼吸']},{t:'鸟', trait:'羽毛', n:['干燥的鳞片','粘湿的皮肤']},{t:'爬行类', trait:'干燥的鳞片皮肤', n:['滑滑的鳞片','湿润的皮肤']}];
+            const d = tData[idx]; document.getElementById('prompt-text').innerText = `${d.t} 的特征是：`; document.getElementById('main-stimulus').innerText = "🐾";
             const opts = [{n:d.trait, c:1}, ...d.n.map(x=>({n:x,c:0}))].sort(()=>Math.random()-0.5);
-            renderOptions(opts.map(item => ({
-                n: item.n, action: () => { 
-                    if(item.c) { triggerCorrect(); if(idx+1 < tData.length) initU4G2(idx+1); else showMessage("动物知识满分！"); } 
-                    else triggerWrong(); 
-                }
-            })), 3);
+            renderOptions(opts.map(item => ({ n: item.n, action: () => { if(item.c) { triggerCorrect(); if(idx+1 < tData.length) initU4G2(idx+1); else showMessage("真棒！"); } else triggerWrong(); } })), 3);
         }
 
-        // --- 弹窗逻辑 ---
-        function showMessage(t) {
-            document.getElementById('msgText').innerText = t;
-            document.getElementById('msgBox').classList.remove('hidden');
-        }
-        function closeMsg() {
-            document.getElementById('msgBox').classList.add('hidden');
-            if(nextLevelCallback) { nextLevelCallback(); nextLevelCallback = null; }
-            else { showUnitMenu(currentUnit); }
-        }
+        // --- 弹窗与通用逻辑 ---
+        function showMessage(t) { document.getElementById('msgText').innerText = t; document.getElementById('msgBox').classList.remove('hidden'); }
+        function closeMsg() { document.getElementById('msgBox').classList.add('hidden'); if(nextLevelCallback) { nextLevelCallback(); nextLevelCallback = null; } else { selectUnit(currentUnit); } }
     </script>
 </body>
 </html>
